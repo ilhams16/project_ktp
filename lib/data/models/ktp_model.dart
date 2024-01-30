@@ -17,4 +17,12 @@ class KTPModel extends KTPEntity with EquatableMixin {
           pekerjaan: pekerjaan,
           pendidikan: pendidikan,
         );
+  Map<String, dynamic> toDataStorage() => {
+        "nama": nama,
+        "ttl": ttl,
+        "kabupaten": kabupaten,
+        "provinsi": provinsi,
+        "pekerjaan": pekerjaan,
+        "pendidikan": pendidikan,
+      };
 }

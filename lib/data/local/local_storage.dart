@@ -1,21 +1,21 @@
 import 'package:hive/hive.dart';
 
-// part 'data_storage.g.dart';
+part 'local_storage.g.dart';
 
 @HiveType(typeId: 0)
 class DataStorage extends HiveObject {
   @HiveField(0)
-  final String nama;
+  late String nama;
   @HiveField(1)
-  final String ttl;
+  late String ttl;
   @HiveField(2)
-  final String provinsi;
+  late String provinsi;
   @HiveField(3)
-  final String kabupaten;
+  late String kabupaten;
   @HiveField(4)
-  final String pekerjaan;
+  late String pekerjaan;
   @HiveField(5)
-  final String pendidikan;
+  late String pendidikan;
 
   DataStorage({
     required this.nama,

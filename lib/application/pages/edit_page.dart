@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
-import 'package:project_ktp/data/datasource/ktp_remote_datasource.dart';
 import 'package:project_ktp/data/datasource/provincies_remote_datasource.dart';
 import 'package:project_ktp/data/datasource/regencies_remote_datasource.dart';
 import 'package:project_ktp/data/local/local_storage.dart';
-import 'package:project_ktp/data/models/ktp_model.dart';
 import 'package:project_ktp/domain/entities/provincies_entities.dart';
 import 'package:project_ktp/domain/entities/regencies_entities.dart';
 
-class AddPage extends StatefulWidget {
+class EditPage extends StatefulWidget {
+  late DataStorage data;
+  EditPage({required this.data});
   @override
-  State<AddPage> createState() => _AddPageState();
+  State<EditPage> createState() => _EditPageState(data: data);
 }
 
-class _AddPageState extends State<AddPage> {
-  TextEditingController _namaController = TextEditingController();
-  TextEditingController _ttlController = TextEditingController();
-  TextEditingController _pekerjaanController = TextEditingController();
-  TextEditingController _pendidikanController = TextEditingController();
+class _EditPageState extends State<EditPage> {
+  late DataStorage data;
+  _EditPageState({required this.data});
+  var _namaController;
+  var _ttlController;
+  var _pekerjaanController;
+  var _pendidikanController;
   var initialProvinsi;
   var initialKabupaten;
   var provinsiId;
@@ -32,9 +34,10 @@ class _AddPageState extends State<AddPage> {
 
   @override
   Widget build(BuildContext context) {
+    initialProvinsi = this.data.provinsi;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tambah Data"),
+        title: Text("Edit Data"),
         centerTitle: true,
         actions: [
           IconButton(onPressed: () => context.go("/"), icon: Icon(Icons.people))
@@ -48,6 +51,7 @@ class _AddPageState extends State<AddPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextFormField(
+              initialValue: data.nama,
               controller: _namaController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -58,6 +62,7 @@ class _AddPageState extends State<AddPage> {
               height: 20,
             ),
             TextFormField(
+              initialValue: data.ttl,
               controller: _ttlController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -100,7 +105,6 @@ class _AddPageState extends State<AddPage> {
                           setState(() {
                             initialProvinsi = newValue!;
                             provinsiId = temp;
-                            initialKabupaten = null;
                           });
                         });
                   } else {
@@ -150,6 +154,7 @@ class _AddPageState extends State<AddPage> {
               height: 20,
             ),
             TextFormField(
+              initialValue: data.pekerjaan,
               controller: _pekerjaanController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -160,6 +165,7 @@ class _AddPageState extends State<AddPage> {
               height: 20,
             ),
             TextFormField(
+              initialValue: data.pendidikan,
               controller: _pendidikanController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -174,13 +180,15 @@ class _AddPageState extends State<AddPage> {
                   setState(() {
                     Hive.openBox<DataStorage>('local');
                     late var box = Hive.box<DataStorage>('local');
-                    box.add(DataStorage(
-                        nama: _namaController.text,
-                        ttl: _ttlController.text,
-                        kabupaten: initialKabupaten,
-                        provinsi: initialProvinsi,
-                        pekerjaan: _pekerjaanController.text,
-                        pendidikan: _pendidikanController.text));
+                    box.put(
+                        data,
+                        DataStorage(
+                            nama: _namaController.text,
+                            ttl: _ttlController.text,
+                            kabupaten: initialKabupaten,
+                            provinsi: initialProvinsi,
+                            pekerjaan: _pekerjaanController.text,
+                            pendidikan: _pendidikanController.text));
                     // print(data);
                   });
                   context.go('/');
