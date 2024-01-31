@@ -17,13 +17,17 @@ class EditPage extends StatefulWidget {
 class _EditPageState extends State<EditPage> {
   final DataStorage data;
   _EditPageState({required this.data});
-  var _namaController;
-  var _ttlController;
-  var _pekerjaanController;
-  var _pendidikanController;
+  late TextEditingController _namaController =
+      TextEditingController(text: data.nama);
+  late TextEditingController _ttlController =
+      TextEditingController(text: data.ttl);
+  late TextEditingController _pekerjaanController =
+      TextEditingController(text: data.pekerjaan);
+  late TextEditingController _pendidikanController =
+      TextEditingController(text: data.pendidikan);
   var initialProvinsi;
   var initialKabupaten;
-  late TextEditingController provinsiId = TextEditingController();
+  var provinsiId;
   var box;
 
   @override
@@ -51,7 +55,6 @@ class _EditPageState extends State<EditPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextFormField(
-              initialValue: data.nama,
               controller: _namaController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -62,7 +65,6 @@ class _EditPageState extends State<EditPage> {
               height: 20,
             ),
             TextFormField(
-              initialValue: data.ttl,
               controller: _ttlController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -154,7 +156,6 @@ class _EditPageState extends State<EditPage> {
               height: 20,
             ),
             TextFormField(
-              initialValue: data.pekerjaan,
               controller: _pekerjaanController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -165,7 +166,6 @@ class _EditPageState extends State<EditPage> {
               height: 20,
             ),
             TextFormField(
-              initialValue: data.pendidikan,
               controller: _pendidikanController,
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
@@ -188,15 +188,15 @@ class _EditPageState extends State<EditPage> {
                   setState(() {
                     // Hive.openBox<DataStorage>('local');
                     late var box = Hive.box<DataStorage>('local');
-                    box.putAt(
-                        index,
-                        DataStorage(
-                            nama: _namaController.text,
-                            ttl: _ttlController.text,
-                            kabupaten: initialKabupaten,
-                            provinsi: initialProvinsi,
-                            pekerjaan: _pekerjaanController.text,
-                            pendidikan: _pendidikanController.text));
+                    late DataStorage storage;
+                    storage = DataStorage(
+                        nama: _namaController.text,
+                        ttl: _ttlController.text,
+                        kabupaten: initialKabupaten,
+                        provinsi: initialProvinsi,
+                        pekerjaan: _pekerjaanController.text,
+                        pendidikan: _pendidikanController.text);
+                    box.putAt(index, storage);
                   });
                   context.go('/');
                 },
