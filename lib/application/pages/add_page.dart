@@ -15,6 +15,7 @@ class AddPage extends StatefulWidget {
 }
 
 class _AddPageState extends State<AddPage> {
+  late GlobalKey<FormState> _formkey = GlobalKey();
   TextEditingController _namaController = TextEditingController();
   TextEditingController _ttlController = TextEditingController();
   TextEditingController _pekerjaanController = TextEditingController();
@@ -41,154 +42,203 @@ class _AddPageState extends State<AddPage> {
         ],
       ),
       body: Form(
+          key: _formkey,
           child: Container(
-        margin: EdgeInsets.all(10),
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: _namaController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Masukkan nama . . .",
-                  label: Text("Nama")),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: _ttlController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Masukkan TTL . . .",
-                  label: Text("TTL")),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            FutureBuilder<List<Provinsi>>(
-                future: GetProvinsi.readJsonData(path: '/provinces.json'),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var data = snapshot.data!;
-                    var listProvinsi = <String>[];
-                    for (var i = 0; i < data.length; i++) {
-                      listProvinsi.add(data[i].name.toString());
+            margin: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: _namaController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Data harus diisi";
+                    } else {
+                      return null;
                     }
-                    return DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text("Provinsi"),
-                        ),
-                        value: initialProvinsi,
-                        items: listProvinsi
-                            .map<DropdownMenuItem<String>>((String index) {
-                          return DropdownMenuItem<String>(
-                              value: index,
-                              child: Text(
-                                index,
-                              ));
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          var temp;
-                          for (var i = 0; i < listProvinsi.length; i++) {
-                            if (data[i].name == newValue) {
-                              temp = data[i].id.toString();
-                            }
-                          }
-                          setState(() {
-                            initialProvinsi = newValue!;
-                            provinsiId = temp;
-                            initialKabupaten = null;
-                          });
-                        });
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                }),
-            SizedBox(
-              height: 20,
-            ),
-            FutureBuilder<List<Kabupaten>>(
-                future: GetKabupaten.readJsonData(
-                    path: '/regencies.json', provinsiId: provinsiId.toString()),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var data = snapshot.data!;
-                    var listKabupaten = <String>[];
-                    for (var i = 0; i < data.length; i++) {
-                      listKabupaten.add(data[i].name.toString());
+                  },
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Masukkan nama . . .",
+                      label: Text("Nama")),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _ttlController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Data harus diisi";
+                    } else {
+                      return null;
                     }
-                    ;
-                    return DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text("Kabupaten"),
-                        ),
-                        value: initialKabupaten,
-                        items: listKabupaten
-                            .map<DropdownMenuItem<String>>((String index) {
-                          return DropdownMenuItem<String>(
-                              value: index,
-                              child: Text(
-                                index,
-                              ));
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            initialKabupaten = newValue!;
-                          });
-                        });
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                }),
-            //   ],
-            // ),
-            SizedBox(
-              height: 20,
+                  },
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Masukkan TTL . . .",
+                      label: Text("TTL")),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                FutureBuilder<List<Provinsi>>(
+                    future: GetProvinsi.readJsonData(path: '/provinces.json'),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var data = snapshot.data!;
+                        var listProvinsi = <String>[];
+                        for (var i = 0; i < data.length; i++) {
+                          listProvinsi.add(data[i].name.toString());
+                        }
+                        return DropdownButtonFormField<String>(
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Data harus diisi";
+                              } else {
+                                return null;
+                              }
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              label: Text("Provinsi"),
+                            ),
+                            value: initialProvinsi,
+                            items: listProvinsi
+                                .map<DropdownMenuItem<String>>((String index) {
+                              return DropdownMenuItem<String>(
+                                  value: index,
+                                  child: Text(
+                                    index,
+                                  ));
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              var temp;
+                              for (var i = 0; i < listProvinsi.length; i++) {
+                                if (data[i].name == newValue) {
+                                  temp = data[i].id.toString();
+                                }
+                              }
+                              setState(() {
+                                initialProvinsi = newValue!;
+                                provinsiId = temp;
+                                initialKabupaten = null;
+                              });
+                            });
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    }),
+                SizedBox(
+                  height: 20,
+                ),
+                FutureBuilder<List<Kabupaten>>(
+                    future: GetKabupaten.readJsonData(
+                        path: '/regencies.json',
+                        provinsiId: provinsiId.toString()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var data = snapshot.data!;
+                        var listKabupaten = <String>[];
+                        for (var i = 0; i < data.length; i++) {
+                          listKabupaten.add(data[i].name.toString());
+                        }
+                        ;
+                        return DropdownButtonFormField<String>(
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Data harus diisi";
+                              } else {
+                                return null;
+                              }
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              label: Text("Kabupaten"),
+                            ),
+                            value: initialKabupaten,
+                            items: listKabupaten
+                                .map<DropdownMenuItem<String>>((String index) {
+                              return DropdownMenuItem<String>(
+                                  value: index,
+                                  child: Text(
+                                    index,
+                                  ));
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                initialKabupaten = newValue!;
+                              });
+                            });
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    }),
+                //   ],
+                // ),
+                SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _pekerjaanController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Data harus diisi";
+                    } else {
+                      return null;
+                    }
+                  },
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Masukkan Pekerjaan . . .",
+                      label: Text("Pekerjaan")),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _pendidikanController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Data harus diisi";
+                    } else {
+                      return null;
+                    }
+                  },
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Masukkan pendidikan",
+                      label: Text("Pendidikan")),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      final isValid = _formkey.currentState!.validate();
+                      if (!isValid) {
+                        return null;
+                      }
+                      _formkey.currentState!.save();
+                      setState(() {
+                        Hive.openBox<DataStorage>('local');
+                        late var box = Hive.box<DataStorage>('local');
+                        box.add(DataStorage(
+                            nama: _namaController.text,
+                            ttl: _ttlController.text,
+                            kabupaten: initialKabupaten,
+                            provinsi: initialProvinsi,
+                            pekerjaan: _pekerjaanController.text,
+                            pendidikan: _pendidikanController.text));
+                        // print(data);
+                      });
+                      context.go('/');
+                    },
+                    child: Text("Submit"))
+              ],
             ),
-            TextFormField(
-              controller: _pekerjaanController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Masukkan Pekerjaan . . .",
-                  label: Text("Pekerjaan")),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: _pendidikanController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Masukkan pendidikan",
-                  label: Text("Pendidikan")),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    Hive.openBox<DataStorage>('local');
-                    late var box = Hive.box<DataStorage>('local');
-                    box.add(DataStorage(
-                        nama: _namaController.text,
-                        ttl: _ttlController.text,
-                        kabupaten: initialKabupaten,
-                        provinsi: initialProvinsi,
-                        pekerjaan: _pekerjaanController.text,
-                        pendidikan: _pendidikanController.text));
-                    // print(data);
-                  });
-                  context.go('/');
-                },
-                child: Text("Submit"))
-          ],
-        ),
-      )),
+          )),
     );
   }
 }

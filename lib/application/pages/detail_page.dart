@@ -29,10 +29,33 @@ class _DetailPageState extends State<DetailPage> {
               icon: Icon(Icons.edit)),
           IconButton(
               onPressed: () {
-                setState(() {
-                  data.delete();
-                });
-                context.go('/');
+                showDialog(
+                    context: context,
+                    builder: ((context) {
+                      return AlertDialog(
+                        title: const Text("Konfrimasi"),
+                        content: const Text("Anda yakin ingin menghapus data?"),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                data.delete();
+                              });
+                              context.go('/');
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    }));
+                // setState(() {
+                //   data.delete();
+                // });
+                // context.go('/');
               },
               icon: Icon(Icons.delete))
         ],

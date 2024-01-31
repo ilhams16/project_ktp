@@ -17,7 +17,35 @@ class _DashboardState extends State<Dashboard> {
   var data = Hive.box<DataStorage>('local');
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    if (data.isNotEmpty) {
+      return Scaffold(
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                  onPressed: () => context.go("/add"), icon: Icon(Icons.add)),
+            ],
+            title: Text("Data"),
+          ),
+          body: ListView(
+            children: List.generate(data.length, (index) {
+              return GestureDetector(
+                onTap: () {
+                  context.go("/detail", extra: data.get(index));
+                },
+                child: Card(
+                  child: Column(
+                    children: [
+                      Text('${data.get(index)?.nama}',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('${data.get(index)?.pekerjaan}')
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ));
+    } else {
+      return Scaffold(
         appBar: AppBar(
           actions: [
             IconButton(
@@ -25,29 +53,8 @@ class _DashboardState extends State<Dashboard> {
           ],
           title: Text("Data"),
         ),
-        body: ListView(
-          children: List.generate(data.length, (index) {
-            return GestureDetector(
-              onTap: () {
-                context.go("/detail", extra: data.get(index));
-              },
-              child: Card(
-                child: Column(
-                  children: [
-                    Text('${data.get(index)?.nama}',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('${data.get(index)?.pekerjaan}')
-                  ],
-                ),
-              ),
-            );
-          }),
-        )
-        // FutureBuilder(
-        //     future: DataLocalDataSource().getBox(),
-        //     builder: (context, snapshot) {
-        //       return Text("${snapshot.error}");
-        //     })
-        );
+        body: Center(child: Text("Data Kosong")),
+      );
+    }
   }
 }

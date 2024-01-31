@@ -15,7 +15,7 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageState extends State<EditPage> {
-  late DataStorage data;
+  final DataStorage data;
   _EditPageState({required this.data});
   var _namaController;
   var _ttlController;
@@ -23,8 +23,8 @@ class _EditPageState extends State<EditPage> {
   var _pendidikanController;
   var initialProvinsi;
   var initialKabupaten;
-  var provinsiId;
-  late var box;
+  late TextEditingController provinsiId = TextEditingController();
+  var box;
 
   @override
   void initState() {
@@ -177,11 +177,19 @@ class _EditPageState extends State<EditPage> {
             ),
             ElevatedButton(
                 onPressed: () {
+                  var datas = Hive.box<DataStorage>('local');
+                  var index = 0;
+                  for (var i = 0; i < datas.length; i++) {
+                    if (this.data.nama == datas.get(i)?.nama &&
+                        this.data.ttl == datas.get(i)?.ttl) {
+                      index = i;
+                    }
+                  }
                   setState(() {
-                    Hive.openBox<DataStorage>('local');
+                    // Hive.openBox<DataStorage>('local');
                     late var box = Hive.box<DataStorage>('local');
-                    box.put(
-                        data,
+                    box.putAt(
+                        index,
                         DataStorage(
                             nama: _namaController.text,
                             ttl: _ttlController.text,
@@ -189,7 +197,6 @@ class _EditPageState extends State<EditPage> {
                             provinsi: initialProvinsi,
                             pekerjaan: _pekerjaanController.text,
                             pendidikan: _pendidikanController.text));
-                    // print(data);
                   });
                   context.go('/');
                 },
